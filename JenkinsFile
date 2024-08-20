@@ -1,0 +1,62 @@
+pipeline {
+    agent any // This specifies that Jenkins can run the pipeline on any available agent
+
+    environment {
+        // Define any environment variables here
+        // For example: MY_ENV_VAR = 'some_value'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from your repository
+                git url: 'https://github.com/your-repo/your-project.git', branch: 'main'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the project
+                // Adjust the build command according to your build tool
+                sh 'mvn clean install' // For Maven projects
+                // Or for a Node.js project, you might use: sh 'npm install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests
+                // Adjust the test command according to your testing framework
+                sh 'mvn test' // For Maven projects
+                // Or for a Node.js project, you might use: sh 'npm test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Deploy the application
+                // Adjust the deploy command according to your deployment process
+                echo 'Deploying application...'
+                // For example: sh 'deploy.sh'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Actions that should always run, regardless of the build result
+            echo 'Cleaning up...'
+            cleanWs() // Clean workspace
+        }
+
+        success {
+            // Actions that should run only if the build was successful
+            echo 'Build succeeded!'
+        }
+
+        failure {
+            // Actions that should run only if the build failed
+            echo 'Build failed.'
+        }
+    }
+}
